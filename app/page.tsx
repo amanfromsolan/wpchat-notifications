@@ -13,28 +13,28 @@ export default function Home() {
 			sidebar={
 				<WPSidebar>
 					<WPSidebarGroup>
-						<WPSidebarItem icon="dashboard">Dashboard</WPSidebarItem>
+						<WPSidebarItem icon="dashboard" label="Dashboard" />
 					</WPSidebarGroup>
 
 					<WPSidebarGroup>
-						<WPSidebarItem icon="admin-post">Posts</WPSidebarItem>
-						<WPSidebarItem icon="admin-media">Media</WPSidebarItem>
-						<WPSidebarItem icon="admin-page">Pages</WPSidebarItem>
-						<WPSidebarItem icon="admin-comments">Comments</WPSidebarItem>
+						<WPSidebarItem icon="admin-post" label="Posts" />
+						<WPSidebarItem icon="admin-media" label="Media" />
+						<WPSidebarItem icon="admin-page" label="Pages" />
+						<WPSidebarItem icon="admin-comments" label="Comments" />
 					</WPSidebarGroup>
 
 					<WPSidebarGroup>
-						<WPSidebarItem icon="admin-appearance">Appearance</WPSidebarItem>
-						<WPSidebarItem icon="admin-plugins">Plugins</WPSidebarItem>
-						<WPSidebarItem icon="admin-users">Users</WPSidebarItem>
-						<WPSidebarItem icon="admin-generic">Settings</WPSidebarItem>
+						<WPSidebarItem icon="admin-appearance" label="Appearance" />
+						<WPSidebarItem icon="admin-plugins" label="Plugins" />
+						<WPSidebarItem icon="admin-users" label="Users" />
+						<WPSidebarItem icon="admin-generic" label="Settings" />
 					</WPSidebarGroup>
 
 					<WPSidebarGroup>
 						<WPSidebarItem icon="admin-generic" label="My Plugin" active open>
-							<WPSidebarSubItem active>Dashboard</WPSidebarSubItem>
-							<WPSidebarSubItem>Settings</WPSidebarSubItem>
-							<WPSidebarSubItem>Analytics</WPSidebarSubItem>
+							<WPSidebarSubItem label="Dashboard" active />
+							<WPSidebarSubItem label="Settings" />
+							<WPSidebarSubItem label="Analytics" />
 						</WPSidebarItem>
 					</WPSidebarGroup>
 				</WPSidebar>

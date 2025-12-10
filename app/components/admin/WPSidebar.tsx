@@ -49,15 +49,13 @@ export function WPSidebarGroup({ children }: WPSidebarGroupProps) {
 // ============================================
 interface WPSidebarItemProps {
 	icon: string;
+	label: string;
 	children?: ReactNode;
-	label?: string;
 	active?: boolean;
 	open?: boolean;
 }
 
-export function WPSidebarItem({ icon, children, label, active, open }: WPSidebarItemProps) {
-	// If no children, just render the item
-	// If children exist, they should be SubItems
+export function WPSidebarItem({ icon, label, children, active, open }: WPSidebarItemProps) {
 	const hasSubItems = Children.count(children) > 0;
 
 	return (
@@ -72,7 +70,7 @@ export function WPSidebarItem({ icon, children, label, active, open }: WPSidebar
 					size={20}
 					className={active ? "text-white" : "text-wp-admin-icon"}
 				/>
-				<span className="text-sm text-white">{label || children}</span>
+				<span className="text-sm text-white">{label}</span>
 			</div>
 
 			{/* Render submenu if open and has subitems */}
@@ -89,18 +87,18 @@ export function WPSidebarItem({ icon, children, label, active, open }: WPSidebar
 // WPSidebarSubItem
 // ============================================
 interface WPSidebarSubItemProps {
-	children: ReactNode;
+	label: string;
 	active?: boolean;
 }
 
-export function WPSidebarSubItem({ children, active }: WPSidebarSubItemProps) {
+export function WPSidebarSubItem({ label, active }: WPSidebarSubItemProps) {
 	return (
 		<div
 			className={`px-3 py-[5px] text-sm leading-[1.4] cursor-pointer transition-colors ${
 				active ? "text-white" : "text-white/70 hover:text-white"
 			}`}
 		>
-			{children}
+			{label}
 		</div>
 	);
 }
