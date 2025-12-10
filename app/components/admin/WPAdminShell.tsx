@@ -90,7 +90,11 @@ export const WPAdminShell = ({
 											item.active ? "bg-[#2271b1]" : ""
 										}`}
 									>
-										<Dashicon icon={item.icon} size={20} className={item.active ? "text-white" : "text-[#a0a5aa]"} />
+										<Dashicon
+											icon={item.icon}
+											size={20}
+											className={item.active ? "text-white" : "text-[#a0a5aa]"}
+										/>
 										<span className="text-sm font-medium text-white">{item.label}</span>
 									</div>
 								))}
@@ -106,7 +110,11 @@ export const WPAdminShell = ({
 										plugin.active ? "bg-[#2271b1]" : ""
 									}`}
 								>
-									<Dashicon icon={plugin.icon} size={20} className={plugin.active ? "text-white" : "text-[#a0a5aa]"} />
+									<Dashicon
+										icon={plugin.icon}
+										size={20}
+										className={plugin.active ? "text-white" : "text-[#a0a5aa]"}
+									/>
 									<span className="text-sm font-medium text-white">{plugin.label}</span>
 								</div>
 
@@ -115,13 +123,11 @@ export const WPAdminShell = ({
 									{plugin.items.map((subItem) => (
 										<div
 											key={subItem.label}
-											className={`px-3 py-[5px] cursor-pointer transition-colors ${
-												subItem.active
-													? "text-white"
-													: "text-white/70 hover:text-white"
+											className={`px-3 py-[5px] text-sm leading-[1.4] cursor-pointer transition-colors ${
+												subItem.active ? "text-white" : "text-white/70 hover:text-white"
 											}`}
 										>
-											<span className="text-sm">{subItem.label}</span>
+											{subItem.label}
 										</div>
 									))}
 								</div>
