@@ -2,9 +2,9 @@
 
 A simple Next.js template with a WordPress admin sidebar for plugin creators to mock up their plugin prototypes.
 
-![Preview](public/preview.jpeg)
+[![Live Preview](public/preview.jpeg)](https://wordpress-sidebar-template.vercel.app/)
 
-**[Live Preview](https://wordpress-sidebar-template.vercel.app/)**
+### [View Live Preview](https://wordpress-sidebar-template.vercel.app/)
 
 ## Getting Started
 
