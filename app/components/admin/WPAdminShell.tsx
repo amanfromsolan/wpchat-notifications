@@ -79,8 +79,8 @@ export const WPAdminShell = ({
 
 			<div className="flex flex-1 min-h-0">
 				{/* Sidebar */}
-				<aside className="w-[160px] bg-[#1d2327] shrink-0 flex flex-col">
-					<nav className="py-2 flex-1 overflow-y-auto">
+				<aside className="w-[160px] bg-[#1d2327] shrink-0 flex flex-col subpixel-antialiased">
+					<nav className="pt-3.5 pb-2 flex-1 overflow-y-auto">
 						{MENU_GROUPS.map((group, groupIndex) => (
 							<div key={groupIndex} className={groupIndex > 0 ? "mt-4" : ""}>
 								{group.map((item) => (
@@ -95,7 +95,7 @@ export const WPAdminShell = ({
 											size={20}
 											className={item.active ? "text-white" : "text-[#a0a5aa]"}
 										/>
-										<span className="text-sm font-medium text-white">{item.label}</span>
+										<span className="text-sm text-white">{item.label}</span>
 									</div>
 								))}
 							</div>
@@ -115,7 +115,7 @@ export const WPAdminShell = ({
 										size={20}
 										className={plugin.active ? "text-white" : "text-[#a0a5aa]"}
 									/>
-									<span className="text-sm font-medium text-white">{plugin.label}</span>
+									<span className="text-sm text-white">{plugin.label}</span>
 								</div>
 
 								{/* Plugin submenu items */}
