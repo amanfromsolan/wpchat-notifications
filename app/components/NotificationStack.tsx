@@ -1,5 +1,6 @@
 "use client";
 
+// Stacked notification cards with hover expansion
 import { useState } from "react";
 import { cn } from "@/app/lib/cn";
 import { MdClose } from "react-icons/md";
