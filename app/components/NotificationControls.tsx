@@ -39,6 +39,12 @@ import {
     MdVerified,
     MdWorkspacePremium,
     MdKeyboardArrowDown,
+    MdTune,
+    MdPalette,
+    MdImage,
+    MdTitle,
+    MdNotes,
+    MdSmartButton,
 } from "react-icons/md";
 
 // Available icons for the notification
@@ -156,14 +162,6 @@ export const NOTIFICATION_PRESETS = {
         primaryButtonText: "Try Again",
         secondaryButtonText: "Contact Support",
     },
-    newFeature: {
-        icon: "rocket" as NotificationIconKey,
-        color: "blue" as NotificationColorKey,
-        heading: "New Feature Available!",
-        subtext: "Introducing AI-powered responses. Let your chatbot handle common questions automatically.",
-        primaryButtonText: "Try It Now",
-        secondaryButtonText: "Learn More",
-    },
     success: {
         icon: "check" as NotificationIconKey,
         color: "green" as NotificationColorKey,
@@ -190,9 +188,18 @@ interface NotificationControlsProps {
     onChange: (settings: NotificationSettings) => void;
 }
 
+type ExpandedField = "heading" | "subtext" | "primaryButtonText" | "secondaryButtonText" | null;
+
 export function NotificationControls({ settings, onChange }: NotificationControlsProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
+    const [isPresetOpen, setIsPresetOpen] = useState(false);
+    const [expandedField, setExpandedField] = useState<ExpandedField>(null);
+    const [selectedPreset, setSelectedPreset] = useState<NotificationPresetKey>("welcome");
+
+    const toggleField = (field: ExpandedField) => {
+        setExpandedField(expandedField === field ? null : field);
+    };
 
     const updateSetting = <K extends keyof NotificationSettings>(
         key: K,
@@ -202,7 +209,9 @@ export function NotificationControls({ settings, onChange }: NotificationControl
     };
 
     const applyPreset = (presetKey: NotificationPresetKey) => {
+        setSelectedPreset(presetKey);
         onChange(NOTIFICATION_PRESETS[presetKey]);
+        setIsPresetOpen(false);
     };
 
     const SelectedIcon = NOTIFICATION_ICONS[settings.icon];
@@ -234,33 +243,55 @@ export function NotificationControls({ settings, onChange }: NotificationControl
                         <p className="text-xs text-gray-500">Customize the notification banner</p>
                     </div>
 
-                    <div className="p-5 space-y-5 max-h-[70vh] overflow-y-auto">
-                        {/* Presets */}
-                        <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-2">
-                                Presets
-                            </label>
-                            <div className="flex flex-wrap gap-2">
-                                {(Object.keys(NOTIFICATION_PRESETS) as NotificationPresetKey[]).map((key) => (
-                                    <button
-                                        key={key}
-                                        onClick={() => applyPreset(key)}
-                                        className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-md capitalize transition-colors"
-                                    >
-                                        {key.replace(/([A-Z])/g, ' $1').trim()}
-                                    </button>
-                                ))}
-                            </div>
+                    <div className="max-h-[70vh] overflow-y-auto divide-y divide-gray-100">
+                        {/* Preset - Dropdown */}
+                        <div className="px-5 h-12 flex items-center relative">
+                            <button
+                                onClick={() => setIsPresetOpen(!isPresetOpen)}
+                                className="w-full flex items-center justify-between"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <MdTune className="size-4 text-gray-400" />
+                                    <span className="text-sm font-medium text-gray-700">Preset</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-gray-500 capitalize">
+                                        {selectedPreset.replace(/([A-Z])/g, ' $1').trim()}
+                                    </span>
+                                    <MdKeyboardArrowDown className={cn(
+                                        "size-4 text-gray-400 transition-transform",
+                                        isPresetOpen && "rotate-180"
+                                    )} />
+                                </div>
+                            </button>
+
+                            {/* Preset Dropdown */}
+                            {isPresetOpen && (
+                                <div className="absolute top-full right-5 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 py-1 min-w-32">
+                                    {(Object.keys(NOTIFICATION_PRESETS) as NotificationPresetKey[]).map((key) => (
+                                        <button
+                                            key={key}
+                                            onClick={() => applyPreset(key)}
+                                            className={cn(
+                                                "w-full px-4 py-2 text-sm text-left capitalize hover:bg-gray-50 transition-colors",
+                                                selectedPreset === key && "bg-gray-50 text-wp-blue-600 font-medium"
+                                            )}
+                                        >
+                                            {key.replace(/([A-Z])/g, ' $1').trim()}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
-                        {/* Color & Icon Row */}
-                        <div className="flex gap-4">
-                            {/* Color Picker */}
-                            <div className="flex-1">
-                                <label className="block text-xs font-medium text-gray-700 mb-2">
-                                    Color Theme
-                                </label>
-                                <div className="flex gap-2.5">
+                        {/* Color */}
+                        <div className="px-5 h-12 flex items-center">
+                            <div className="w-full flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <MdPalette className="size-4 text-gray-400" />
+                                    <span className="text-sm font-medium text-gray-700">Color</span>
+                                </div>
+                                <div className="flex gap-2">
                                     {(Object.keys(NOTIFICATION_COLORS) as NotificationColorKey[]).map((key) => {
                                         const color = NOTIFICATION_COLORS[key];
                                         return (
@@ -280,114 +311,189 @@ export function NotificationControls({ settings, onChange }: NotificationControl
                                     })}
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Icon Picker Dropdown */}
-                            <div className="flex-1 relative">
-                                <label className="block text-xs font-medium text-gray-700 mb-2">
-                                    Icon
-                                </label>
-                                <button
-                                    onClick={() => setIsIconPickerOpen(!isIconPickerOpen)}
-                                    className={cn(
-                                        "w-full px-3 py-2 border border-gray-200 rounded-lg",
-                                        "flex items-center justify-between",
-                                        "hover:bg-gray-50 transition-colors",
-                                        isIconPickerOpen && "ring-2 ring-wp-blue-500"
-                                    )}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <div className={cn("size-8 rounded-md flex items-center justify-center", selectedColor.iconBg)}>
-                                            <SelectedIcon className={cn("size-5", selectedColor.iconColor)} />
-                                        </div>
-                                        <span className="text-sm text-gray-700 capitalize">{settings.icon}</span>
+                        {/* Icon */}
+                        <div className="px-5 h-12 flex items-center relative">
+                            <button
+                                onClick={() => setIsIconPickerOpen(!isIconPickerOpen)}
+                                className="w-full flex items-center justify-between"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <MdImage className="size-4 text-gray-400" />
+                                    <span className="text-sm font-medium text-gray-700">Icon</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div className={cn("size-7 rounded-md flex items-center justify-center", selectedColor.iconBg)}>
+                                        <SelectedIcon className={cn("size-4", selectedColor.iconColor)} />
                                     </div>
                                     <MdKeyboardArrowDown className={cn(
-                                        "size-5 text-gray-400 transition-transform",
+                                        "size-4 text-gray-400 transition-transform",
                                         isIconPickerOpen && "rotate-180"
                                     )} />
-                                </button>
+                                </div>
+                            </button>
 
-                                {/* Icon Dropdown */}
-                                {isIconPickerOpen && (
-                                    <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-3 max-h-56 overflow-y-auto w-56">
-                                        <div className="grid grid-cols-4 gap-2">
-                                            {(Object.keys(NOTIFICATION_ICONS) as NotificationIconKey[]).map((key) => {
-                                                const Icon = NOTIFICATION_ICONS[key];
-                                                return (
-                                                    <button
-                                                        key={key}
-                                                        onClick={() => {
-                                                            updateSetting("icon", key);
-                                                            setIsIconPickerOpen(false);
-                                                        }}
-                                                        className={cn(
-                                                            "size-10 rounded-md flex items-center justify-center transition-colors shrink-0",
-                                                            settings.icon === key
-                                                                ? cn(selectedColor.iconBg, selectedColor.iconColor)
-                                                                : "hover:bg-gray-100 text-gray-500"
-                                                        )}
-                                                        title={key}
-                                                    >
-                                                        <Icon className="size-5" />
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
+                            {/* Icon Dropdown */}
+                            {isIconPickerOpen && (
+                                <div className="absolute top-full right-5 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-3 max-h-56 overflow-y-auto w-56">
+                                    <div className="grid grid-cols-4 gap-2">
+                                        {(Object.keys(NOTIFICATION_ICONS) as NotificationIconKey[]).map((key) => {
+                                            const Icon = NOTIFICATION_ICONS[key];
+                                            return (
+                                                <button
+                                                    key={key}
+                                                    onClick={() => {
+                                                        updateSetting("icon", key);
+                                                        setIsIconPickerOpen(false);
+                                                    }}
+                                                    className={cn(
+                                                        "size-10 rounded-md flex items-center justify-center transition-colors shrink-0",
+                                                        settings.icon === key
+                                                            ? cn(selectedColor.iconBg, selectedColor.iconColor)
+                                                            : "hover:bg-gray-100 text-gray-500"
+                                                    )}
+                                                    title={key}
+                                                >
+                                                    <Icon className="size-5" />
+                                                </button>
+                                            );
+                                        })}
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </div>
 
-                        {/* Heading */}
+                        {/* Heading - Accordion */}
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                                Heading
-                            </label>
-                            <input
-                                type="text"
-                                value={settings.heading}
-                                onChange={(e) => updateSetting("heading", e.target.value)}
-                                className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
-                            />
+                            <button
+                                onClick={() => toggleField("heading")}
+                                className="w-full px-5 h-12 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <MdTitle className="size-4 text-gray-400" />
+                                    <span className="text-sm font-medium text-gray-700">Heading</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-gray-500 truncate max-w-[180px]">
+                                        {settings.heading}
+                                    </span>
+                                    <MdKeyboardArrowDown className={cn(
+                                        "size-4 text-gray-400 transition-transform shrink-0",
+                                        expandedField === "heading" && "rotate-180"
+                                    )} />
+                                </div>
+                            </button>
+                            {expandedField === "heading" && (
+                                <div className="px-5 pb-3">
+                                    <input
+                                        type="text"
+                                        value={settings.heading}
+                                        onChange={(e) => updateSetting("heading", e.target.value)}
+                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
+                                        autoFocus
+                                    />
+                                </div>
+                            )}
                         </div>
 
-                        {/* Subtext */}
+                        {/* Subtext - Accordion */}
                         <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                                Subtext
-                            </label>
-                            <textarea
-                                value={settings.subtext}
-                                onChange={(e) => updateSetting("subtext", e.target.value)}
-                                rows={2}
-                                className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent resize-none"
-                            />
+                            <button
+                                onClick={() => toggleField("subtext")}
+                                className="w-full px-5 h-12 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <MdNotes className="size-4 text-gray-400" />
+                                    <span className="text-sm font-medium text-gray-700">Subtext</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-gray-500 truncate max-w-[180px]">
+                                        {settings.subtext}
+                                    </span>
+                                    <MdKeyboardArrowDown className={cn(
+                                        "size-4 text-gray-400 transition-transform shrink-0",
+                                        expandedField === "subtext" && "rotate-180"
+                                    )} />
+                                </div>
+                            </button>
+                            {expandedField === "subtext" && (
+                                <div className="px-5 pb-3">
+                                    <textarea
+                                        value={settings.subtext}
+                                        onChange={(e) => updateSetting("subtext", e.target.value)}
+                                        rows={3}
+                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent resize-none"
+                                        autoFocus
+                                    />
+                                </div>
+                            )}
                         </div>
 
-                        {/* Button Texts Row */}
-                        <div className="flex gap-4">
-                            <div className="flex-1">
-                                <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                                    Primary Button
-                                </label>
-                                <input
-                                    type="text"
-                                    value={settings.primaryButtonText}
-                                    onChange={(e) => updateSetting("primaryButtonText", e.target.value)}
-                                    className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            <div className="flex-1">
-                                <label className="block text-xs font-medium text-gray-700 mb-1.5">
-                                    Secondary Button
-                                </label>
-                                <input
-                                    type="text"
-                                    value={settings.secondaryButtonText}
-                                    onChange={(e) => updateSetting("secondaryButtonText", e.target.value)}
-                                    className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
-                                />
-                            </div>
+                        {/* Primary Button - Accordion */}
+                        <div>
+                            <button
+                                onClick={() => toggleField("primaryButtonText")}
+                                className="w-full px-5 h-12 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <MdSmartButton className="size-4 text-gray-400" />
+                                    <span className="text-sm font-medium text-gray-700">Primary Button</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-gray-500 truncate max-w-[180px]">
+                                        {settings.primaryButtonText}
+                                    </span>
+                                    <MdKeyboardArrowDown className={cn(
+                                        "size-4 text-gray-400 transition-transform shrink-0",
+                                        expandedField === "primaryButtonText" && "rotate-180"
+                                    )} />
+                                </div>
+                            </button>
+                            {expandedField === "primaryButtonText" && (
+                                <div className="px-5 pb-3">
+                                    <input
+                                        type="text"
+                                        value={settings.primaryButtonText}
+                                        onChange={(e) => updateSetting("primaryButtonText", e.target.value)}
+                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
+                                        autoFocus
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Secondary Button - Accordion */}
+                        <div>
+                            <button
+                                onClick={() => toggleField("secondaryButtonText")}
+                                className="w-full px-5 h-12 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <MdSmartButton className="size-4 text-gray-400" />
+                                    <span className="text-sm font-medium text-gray-700">Secondary Button</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-gray-500 truncate max-w-[180px]">
+                                        {settings.secondaryButtonText}
+                                    </span>
+                                    <MdKeyboardArrowDown className={cn(
+                                        "size-4 text-gray-400 transition-transform shrink-0",
+                                        expandedField === "secondaryButtonText" && "rotate-180"
+                                    )} />
+                                </div>
+                            </button>
+                            {expandedField === "secondaryButtonText" && (
+                                <div className="px-5 pb-3">
+                                    <input
+                                        type="text"
+                                        value={settings.secondaryButtonText}
+                                        onChange={(e) => updateSetting("secondaryButtonText", e.target.value)}
+                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
+                                        autoFocus
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
