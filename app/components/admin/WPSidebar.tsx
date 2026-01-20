@@ -48,7 +48,7 @@ export function WPSidebarGroup({ children }: WPSidebarGroupProps) {
 // WPSidebarItem
 // ============================================
 interface WPSidebarItemProps {
-	icon: string;
+	icon: string | ReactNode;
 	label: string;
 	children?: ReactNode;
 	active?: boolean;
@@ -65,11 +65,15 @@ export function WPSidebarItem({ icon, label, children, active, open }: WPSidebar
 					active ? "bg-wp-admin-active" : ""
 				}`}
 			>
-				<Dashicon
-					icon={icon}
-					size={20}
-					className={active ? "text-white" : "text-wp-admin-icon"}
-				/>
+				{typeof icon === "string" ? (
+					<Dashicon
+						icon={icon}
+						size={20}
+						className={active ? "text-white" : "text-wp-admin-icon"}
+					/>
+				) : (
+					<span className={active ? "text-white" : "text-wp-admin-icon"}>{icon}</span>
+				)}
 				<span className="text-sm text-white">{label}</span>
 			</div>
 
@@ -89,9 +93,10 @@ export function WPSidebarItem({ icon, label, children, active, open }: WPSidebar
 interface WPSidebarSubItemProps {
 	label: string;
 	active?: boolean;
+	href?: string;
 }
 
-export function WPSidebarSubItem({ label, active }: WPSidebarSubItemProps) {
+export function WPSidebarSubItem({ label, active, href }: WPSidebarSubItemProps) {
 	return (
 		<div
 			className={`px-3 py-[5px] text-sm leading-[1.4] cursor-pointer transition-colors ${
