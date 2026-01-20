@@ -38,13 +38,15 @@ export function NotificationStack({
             onMouseEnter={() => setIsExpanded(true)}
             onMouseLeave={() => setIsExpanded(false)}
         >
-            {/* Overlay */}
-            <div
-                className={cn(
-                    "fixed inset-0 bg-black/40 transition-opacity duration-300 pointer-events-none",
-                    isExpanded ? "opacity-100" : "opacity-0"
-                )}
-            />
+            {/* Overlay - only show when multiple notifications */}
+            {count > 1 && (
+                <div
+                    className={cn(
+                        "fixed inset-0 bg-black/40 transition-opacity duration-300 pointer-events-none",
+                        isExpanded ? "opacity-100" : "opacity-0"
+                    )}
+                />
+            )}
 
             <div className="relative w-full max-w-3xl">
                 {visibleNotifications.map((notification, index) => {
