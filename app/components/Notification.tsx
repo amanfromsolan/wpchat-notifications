@@ -13,6 +13,8 @@ interface NotificationProps {
     onPrimaryClick?: () => void;
     onSecondaryClick?: () => void;
     className?: string;
+    bgClassName?: string;
+    primaryButtonClassName?: string;
 }
 
 export const Notification = ({
@@ -24,10 +26,12 @@ export const Notification = ({
     onPrimaryClick,
     onSecondaryClick,
     className,
+    bgClassName,
+    primaryButtonClassName,
 }: NotificationProps) => {
     return (
         <div className={cn("flex justify-center px-4 py-4", className)}>
-            <div className="w-full max-w-3xl bg-white rounded-lg border border-black/10 shadow-lg p-5">
+            <div className={cn("w-full max-w-3xl rounded-lg border border-black/10 shadow-lg p-5", bgClassName || "bg-white")}>
                 <div className="flex gap-4">
                     {/* Icon placeholder */}
                     <div className="shrink-0">
@@ -47,7 +51,7 @@ export const Notification = ({
                             {subtext}
                         </p>
                         <div className="flex gap-3">
-                            <PrimaryButton onClick={onPrimaryClick}>
+                            <PrimaryButton onClick={onPrimaryClick} className={primaryButtonClassName}>
                                 {primaryButtonText}
                             </PrimaryButton>
                             <SecondaryButton onClick={onSecondaryClick}>
