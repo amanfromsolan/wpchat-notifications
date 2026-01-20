@@ -83,34 +83,38 @@ export const NOTIFICATION_COLORS = {
     blue: {
         label: "Blue",
         bg: "bg-wp-blue-50",
-        iconBg: "bg-wp-blue-100",
+        iconBg: "bg-wp-blue-50",
         iconColor: "text-wp-blue-500",
         buttonBg: "bg-wp-blue-500 hover:bg-wp-blue-600",
         buttonBorder: "border-wp-blue-500 hover:border-wp-blue-600",
+        swatch: "bg-wp-blue-600",
     },
     green: {
         label: "Green",
         bg: "bg-emerald-50",
-        iconBg: "bg-emerald-100",
+        iconBg: "bg-emerald-50",
         iconColor: "text-emerald-600",
         buttonBg: "bg-emerald-600 hover:bg-emerald-700",
         buttonBorder: "border-emerald-600 hover:border-emerald-700",
+        swatch: "bg-emerald-600",
     },
     amber: {
         label: "Amber",
         bg: "bg-amber-50",
-        iconBg: "bg-amber-100",
+        iconBg: "bg-amber-50",
         iconColor: "text-amber-600",
         buttonBg: "bg-amber-600 hover:bg-amber-700",
         buttonBorder: "border-amber-600 hover:border-amber-700",
+        swatch: "bg-amber-600",
     },
     red: {
         label: "Red",
         bg: "bg-red-50",
-        iconBg: "bg-red-100",
+        iconBg: "bg-red-50",
         iconColor: "text-red-500",
         buttonBg: "bg-red-600 hover:bg-red-700",
         buttonBorder: "border-red-600 hover:border-red-700",
+        swatch: "bg-red-600",
     },
 } as const;
 
@@ -256,7 +260,7 @@ export function NotificationControls({ settings, onChange }: NotificationControl
                                 <label className="block text-xs font-medium text-gray-700 mb-2">
                                     Color Theme
                                 </label>
-                                <div className="flex gap-2">
+                                <div className="flex gap-2.5">
                                     {(Object.keys(NOTIFICATION_COLORS) as NotificationColorKey[]).map((key) => {
                                         const color = NOTIFICATION_COLORS[key];
                                         return (
@@ -264,16 +268,14 @@ export function NotificationControls({ settings, onChange }: NotificationControl
                                                 key={key}
                                                 onClick={() => updateSetting("color", key)}
                                                 className={cn(
-                                                    "size-10 rounded-lg flex items-center justify-center transition-all",
-                                                    color.bg,
+                                                    "size-6 rounded-full transition-all",
+                                                    color.swatch,
                                                     settings.color === key
                                                         ? "ring-2 ring-offset-2 ring-gray-400 scale-110"
-                                                        : "hover:scale-105"
+                                                        : "hover:scale-110"
                                                 )}
                                                 title={color.label}
-                                            >
-                                                <div className={cn("size-5 rounded-full", color.iconBg)} />
-                                            </button>
+                                            />
                                         );
                                     })}
                                 </div>
@@ -307,8 +309,8 @@ export function NotificationControls({ settings, onChange }: NotificationControl
 
                                 {/* Icon Dropdown */}
                                 {isIconPickerOpen && (
-                                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-3 max-h-48 overflow-y-auto">
-                                        <div className="grid grid-cols-6 gap-1.5">
+                                    <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-3 max-h-56 overflow-y-auto w-56">
+                                        <div className="grid grid-cols-4 gap-2">
                                             {(Object.keys(NOTIFICATION_ICONS) as NotificationIconKey[]).map((key) => {
                                                 const Icon = NOTIFICATION_ICONS[key];
                                                 return (
@@ -319,10 +321,10 @@ export function NotificationControls({ settings, onChange }: NotificationControl
                                                             setIsIconPickerOpen(false);
                                                         }}
                                                         className={cn(
-                                                            "size-9 rounded-md flex items-center justify-center transition-colors",
+                                                            "size-10 rounded-md flex items-center justify-center transition-colors shrink-0",
                                                             settings.icon === key
                                                                 ? cn(selectedColor.iconBg, selectedColor.iconColor)
-                                                                : "bg-gray-50 hover:bg-gray-100 text-gray-600"
+                                                                : "hover:bg-gray-100 text-gray-500"
                                                         )}
                                                         title={key}
                                                     >

@@ -1,0 +1,1 @@
+- we use tailwind 4.0 and all the tailwind config is in @app/globals.css
