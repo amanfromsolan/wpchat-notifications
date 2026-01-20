@@ -5,6 +5,8 @@ import { cn } from "@/app/lib/cn";
 import {
     MdSettings,
     MdClose,
+    MdAdd,
+    MdRemove,
     MdCelebration,
     MdWarning,
     MdInfo,
@@ -184,18 +186,27 @@ export interface NotificationSettings {
 }
 
 interface NotificationControlsProps {
-    settings: NotificationSettings;
-    onChange: (settings: NotificationSettings) => void;
+    notifications: NotificationSettings[];
+    selectedIndex: number;
+    onSelectIndex: (index: number) => void;
+    onChange: (notifications: NotificationSettings[]) => void;
 }
 
 type ExpandedField = "heading" | "subtext" | "primaryButtonText" | "secondaryButtonText" | null;
 
-export function NotificationControls({ settings, onChange }: NotificationControlsProps) {
+export function NotificationControls({
+    notifications,
+    selectedIndex,
+    onSelectIndex,
+    onChange
+}: NotificationControlsProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
     const [isPresetOpen, setIsPresetOpen] = useState(false);
     const [expandedField, setExpandedField] = useState<ExpandedField>(null);
     const [selectedPreset, setSelectedPreset] = useState<NotificationPresetKey>("welcome");
+
+    const settings = notifications[selectedIndex] || NOTIFICATION_PRESETS.welcome;
 
     const toggleField = (field: ExpandedField) => {
         setExpandedField(expandedField === field ? null : field);
@@ -205,13 +216,34 @@ export function NotificationControls({ settings, onChange }: NotificationControl
         key: K,
         value: NotificationSettings[K]
     ) => {
-        onChange({ ...settings, [key]: value });
+        const updated = [...notifications];
+        updated[selectedIndex] = { ...settings, [key]: value };
+        onChange(updated);
     };
 
     const applyPreset = (presetKey: NotificationPresetKey) => {
         setSelectedPreset(presetKey);
-        onChange(NOTIFICATION_PRESETS[presetKey]);
+        const updated = [...notifications];
+        updated[selectedIndex] = NOTIFICATION_PRESETS[presetKey];
+        onChange(updated);
         setIsPresetOpen(false);
+    };
+
+    const addNotification = () => {
+        if (notifications.length < 3) {
+            onChange([...notifications, NOTIFICATION_PRESETS.welcome]);
+            onSelectIndex(notifications.length);
+        }
+    };
+
+    const removeNotification = (index: number) => {
+        if (notifications.length > 1) {
+            const updated = notifications.filter((_, i) => i !== index);
+            onChange(updated);
+            if (selectedIndex >= updated.length) {
+                onSelectIndex(updated.length - 1);
+            }
+        }
     };
 
     const SelectedIcon = NOTIFICATION_ICONS[settings.icon];
@@ -244,6 +276,50 @@ export function NotificationControls({ settings, onChange }: NotificationControl
                     </div>
 
                     <div className="max-h-[70vh] overflow-y-auto divide-y divide-gray-100">
+                        {/* Notification Selector */}
+                        <div className="px-5 h-12 flex items-center">
+                            <div className="w-full flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <MdNotifications className="size-4 text-gray-400" />
+                                    <span className="text-sm font-medium text-gray-700">Notification</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    {notifications.map((_, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => onSelectIndex(index)}
+                                            className={cn(
+                                                "size-7 rounded-md flex items-center justify-center text-xs font-medium transition-colors",
+                                                selectedIndex === index
+                                                    ? "bg-wp-blue-500 text-white"
+                                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                            )}
+                                        >
+                                            {index + 1}
+                                        </button>
+                                    ))}
+                                    {notifications.length < 3 && (
+                                        <button
+                                            onClick={addNotification}
+                                            className="size-7 rounded-md flex items-center justify-center bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors"
+                                            title="Add notification"
+                                        >
+                                            <MdAdd className="size-4" />
+                                        </button>
+                                    )}
+                                    {notifications.length > 1 && (
+                                        <button
+                                            onClick={() => removeNotification(selectedIndex)}
+                                            className="size-7 rounded-md flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+                                            title="Remove current notification"
+                                        >
+                                            <MdRemove className="size-4" />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Preset - Dropdown */}
                         <div className="px-5 h-12 flex items-center relative">
                             <button
