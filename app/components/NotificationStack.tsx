@@ -33,22 +33,27 @@ export function NotificationStack({
     const count = visibleNotifications.length;
 
     return (
-        <div
-            className="flex justify-center px-4 py-4"
-            onMouseEnter={() => setIsExpanded(true)}
-            onMouseLeave={() => setIsExpanded(false)}
-        >
+        <div className="flex justify-center px-4 py-4">
             {/* Overlay - only show when multiple notifications */}
             {count > 1 && (
                 <div
                     className={cn(
-                        "fixed inset-0 bg-black/40 transition-opacity duration-300 pointer-events-none",
+                        "fixed inset-0 bg-black/40 transition-opacity duration-300 pointer-events-none z-40",
                         isExpanded ? "opacity-100" : "opacity-0"
                     )}
                 />
             )}
 
-            <div className="relative w-full max-w-3xl">
+            <div 
+                className="relative w-full max-w-3xl"
+                onMouseEnter={() => setIsExpanded(true)}
+                onMouseLeave={() => setIsExpanded(false)}
+                style={{
+                    zIndex: isExpanded ? 50 : 0,
+                    transition: isExpanded ? "z-index 0s" : "z-index 0s 300ms",
+                    paddingBottom: isExpanded ? `${(count - 1) * 155}px` : 0,
+                }}
+            >
                 {visibleNotifications.map((notification, index) => {
                     const IconComponent = NOTIFICATION_ICONS[notification.icon];
                     const colorTheme = NOTIFICATION_COLORS[notification.color];

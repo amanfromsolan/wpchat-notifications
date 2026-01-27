@@ -242,11 +242,11 @@ export function NotificationControls({
                 {/* Tabs */}
                 <div className="flex items-end gap-1">
                 {notifications.map((notification, index) => (
-                    <button
+                    <div
                         key={index}
                         onClick={() => onSelectIndex(index)}
                         className={cn(
-                            "group relative flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all min-w-0 cursor-pointer",
+                            "group relative flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all min-w-0 cursor-pointer select-none",
                             selectedIndex === index
                                 ? "bg-white text-gray-900 rounded-t-lg"
                                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-300/50 rounded-t-lg"
@@ -269,7 +269,7 @@ export function NotificationControls({
                                 <MdClose className="size-3" />
                             </button>
                         )}
-                    </button>
+                    </div>
                 ))}
                 {notifications.length < 3 && (
                     <button
