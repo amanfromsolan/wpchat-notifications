@@ -235,7 +235,7 @@ export function NotificationControls({
     return (
         <div className="w-full max-w-3xl">
             {/* Header */}
-            <h3 className="text-sm font-semibold text-gray-600 mb-3">Notification Controls</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Notification Controls</h3>
             
             {/* Card */}
             <div className="bg-gray-200 rounded-xl p-1 shadow-lg">
@@ -255,8 +255,8 @@ export function NotificationControls({
                         <span className={cn(
                             "shrink-0 size-5 rounded text-xs font-medium flex items-center justify-center",
                             selectedIndex === index
-                                ? "bg-gray-200 text-gray-600"
-                                : "bg-gray-400/50 text-gray-600"
+                                ? "bg-gray-100 text-gray-500"
+                                : "bg-gray-300/50 text-gray-500"
                         )}>
                             {index + 1}
                         </span>
@@ -297,18 +297,19 @@ export function NotificationControls({
                         {/* Preset */}
                         <div className="flex items-center gap-3">
                             <label className="text-sm text-gray-600 w-24 shrink-0">Preset</label>
-                            <div className="flex flex-wrap gap-2">
-                                {(Object.keys(NOTIFICATION_PRESETS) as NotificationPresetKey[]).map((key) => {
+                            <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden">
+                                {(Object.keys(NOTIFICATION_PRESETS) as NotificationPresetKey[]).map((key, index, arr) => {
                                     const isSelected = NOTIFICATION_PRESETS[key].heading === settings.heading;
                                     return (
                                         <button
                                             key={key}
                                             onClick={() => applyPreset(key)}
                                             className={cn(
-                                                "px-3 py-1.5 text-sm rounded-lg transition-all capitalize",
+                                                "px-3 py-1.5 text-sm transition-all capitalize",
+                                                index !== arr.length - 1 && "border-r border-gray-200",
                                                 isSelected
-                                                    ? "bg-gray-900 text-white"
-                                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                                    ? "bg-wp-blue-50 text-wp-blue-600 font-medium"
+                                                    : "bg-white text-gray-600 hover:bg-gray-50"
                                             )}
                                         >
                                             {key.replace(/([A-Z])/g, ' $1').trim()}
@@ -329,10 +330,10 @@ export function NotificationControls({
                                             key={key}
                                             onClick={() => updateSetting("color", key)}
                                             className={cn(
-                                                "size-7 rounded-full transition-all",
+                                                "size-5 rounded-full transition-all",
                                                 color.swatch,
                                                 settings.color === key
-                                                    ? "ring-2 ring-offset-2 ring-gray-400 scale-110"
+                                                    ? "ring-2 ring-offset-1 ring-gray-400"
                                                     : "hover:scale-110"
                                             )}
                                             title={color.label}
