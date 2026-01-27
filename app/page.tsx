@@ -34,7 +34,7 @@ export default function Home() {
 						}
 					}}
 				/>
-				<div className="flex justify-center px-4 pb-4 mt-8">
+				<div className="flex justify-center px-4 pb-4 mt-12">
 					<NotificationControls
 						notifications={notifications}
 						selectedIndex={selectedIndex}

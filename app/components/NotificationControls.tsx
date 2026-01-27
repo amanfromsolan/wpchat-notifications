@@ -233,9 +233,14 @@ export function NotificationControls({
     const selectedColor = NOTIFICATION_COLORS[settings.color];
 
     return (
-        <div className="w-full max-w-3xl bg-gray-200 rounded-xl p-1 shadow-lg">
-            {/* Tabs */}
-            <div className="flex items-end gap-1">
+        <div className="w-full max-w-3xl">
+            {/* Header */}
+            <h3 className="text-sm font-semibold text-gray-600 mb-3">Notification Controls</h3>
+            
+            {/* Card */}
+            <div className="bg-gray-200 rounded-xl p-1 shadow-lg">
+                {/* Tabs */}
+                <div className="flex items-end gap-1">
                 {notifications.map((notification, index) => (
                     <button
                         key={index}
@@ -437,6 +442,7 @@ export function NotificationControls({
                     </div>
                 </div>
                 </div>
+            </div>
             </div>
         </div>
     );
