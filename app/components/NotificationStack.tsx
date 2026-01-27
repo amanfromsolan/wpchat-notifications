@@ -51,9 +51,15 @@ export function NotificationStack({
                 style={{
                     zIndex: isExpanded ? 50 : 0,
                     transition: isExpanded ? "z-index 0s" : "z-index 0s 300ms",
-                    paddingBottom: isExpanded ? `${(count - 1) * 155}px` : 0,
                 }}
             >
+                {/* Invisible hover area that covers expanded notifications without affecting layout */}
+                {count > 1 && (
+                    <div 
+                        className="absolute inset-0"
+                        style={{ height: isExpanded ? `${147 + (count - 1) * 155}px` : undefined }}
+                    />
+                )}
                 {visibleNotifications.map((notification, index) => {
                     const IconComponent = NOTIFICATION_ICONS[notification.icon];
                     const colorTheme = NOTIFICATION_COLORS[notification.color];
