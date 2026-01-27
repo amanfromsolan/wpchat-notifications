@@ -3,10 +3,8 @@
 import { useState } from "react";
 import { cn } from "@/app/lib/cn";
 import {
-    MdSettings,
-    MdClose,
     MdAdd,
-    MdRemove,
+    MdClose,
     MdCelebration,
     MdWarning,
     MdInfo,
@@ -41,12 +39,6 @@ import {
     MdVerified,
     MdWorkspacePremium,
     MdKeyboardArrowDown,
-    MdTune,
-    MdPalette,
-    MdImage,
-    MdTitle,
-    MdNotes,
-    MdSmartButton,
 } from "react-icons/md";
 
 // Available icons for the notification
@@ -192,25 +184,15 @@ interface NotificationControlsProps {
     onChange: (notifications: NotificationSettings[]) => void;
 }
 
-type ExpandedField = "heading" | "subtext" | "primaryButtonText" | "secondaryButtonText" | null;
-
 export function NotificationControls({
     notifications,
     selectedIndex,
     onSelectIndex,
     onChange
 }: NotificationControlsProps) {
-    const [isOpen, setIsOpen] = useState(false);
     const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
-    const [isPresetOpen, setIsPresetOpen] = useState(false);
-    const [expandedField, setExpandedField] = useState<ExpandedField>(null);
-    const [selectedPreset, setSelectedPreset] = useState<NotificationPresetKey>("welcome");
 
     const settings = notifications[selectedIndex] || NOTIFICATION_PRESETS.welcome;
-
-    const toggleField = (field: ExpandedField) => {
-        setExpandedField(expandedField === field ? null : field);
-    };
 
     const updateSetting = <K extends keyof NotificationSettings>(
         key: K,
@@ -222,11 +204,9 @@ export function NotificationControls({
     };
 
     const applyPreset = (presetKey: NotificationPresetKey) => {
-        setSelectedPreset(presetKey);
         const updated = [...notifications];
         updated[selectedIndex] = NOTIFICATION_PRESETS[presetKey];
         onChange(updated);
-        setIsPresetOpen(false);
     };
 
     const addNotification = () => {
@@ -236,12 +216,15 @@ export function NotificationControls({
         }
     };
 
-    const removeNotification = (index: number) => {
+    const removeNotification = (index: number, e: React.MouseEvent) => {
+        e.stopPropagation();
         if (notifications.length > 1) {
             const updated = notifications.filter((_, i) => i !== index);
             onChange(updated);
             if (selectedIndex >= updated.length) {
                 onSelectIndex(updated.length - 1);
+            } else if (selectedIndex === index) {
+                onSelectIndex(Math.max(0, index - 1));
             }
         }
     };
@@ -250,330 +233,211 @@ export function NotificationControls({
     const selectedColor = NOTIFICATION_COLORS[settings.color];
 
     return (
-        <>
-            {/* Floating Control Button */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className={cn(
-                    "fixed bottom-6 right-6 z-50",
-                    "size-14 rounded-full",
-                    "bg-gray-900 text-white shadow-lg",
-                    "flex items-center justify-center",
-                    "hover:bg-gray-800 hover:scale-105",
-                    "transition-all duration-200",
-                    isOpen && "rotate-90"
-                )}
-            >
-                {isOpen ? <MdClose className="size-6" /> : <MdSettings className="size-6" />}
-            </button>
-
-            {/* Control Panel */}
-            {isOpen && (
-                <div className="fixed bottom-24 right-6 z-50 w-[480px] bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden">
-                    <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
-                        <h3 className="font-semibold text-gray-900">Notification Controls</h3>
-                        <p className="text-xs text-gray-500">Customize the notification banner</p>
-                    </div>
-
-                    <div className="max-h-[70vh] overflow-y-auto divide-y divide-gray-100">
-                        {/* Notification Selector */}
-                        <div className="px-5 h-12 flex items-center">
-                            <div className="w-full flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <MdNotifications className="size-4 text-gray-400" />
-                                    <span className="text-sm font-medium text-gray-700">Notification</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    {notifications.map((_, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={() => onSelectIndex(index)}
-                                            className={cn(
-                                                "size-7 rounded-md flex items-center justify-center text-xs font-medium transition-colors",
-                                                selectedIndex === index
-                                                    ? "bg-wp-blue-500 text-white"
-                                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                                            )}
-                                        >
-                                            {index + 1}
-                                        </button>
-                                    ))}
-                                    {notifications.length < 3 && (
-                                        <button
-                                            onClick={addNotification}
-                                            className="size-7 rounded-md flex items-center justify-center bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors"
-                                            title="Add notification"
-                                        >
-                                            <MdAdd className="size-4" />
-                                        </button>
-                                    )}
-                                    {notifications.length > 1 && (
-                                        <button
-                                            onClick={() => removeNotification(selectedIndex)}
-                                            className="size-7 rounded-md flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
-                                            title="Remove current notification"
-                                        >
-                                            <MdRemove className="size-4" />
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Preset - Dropdown */}
-                        <div className="px-5 h-12 flex items-center relative">
+        <div className="w-full max-w-3xl bg-gray-200 rounded-xl p-1 shadow-lg">
+            {/* Tabs */}
+            <div className="flex items-end gap-1">
+                {notifications.map((notification, index) => (
+                    <button
+                        key={index}
+                        onClick={() => onSelectIndex(index)}
+                        className={cn(
+                            "group relative flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all min-w-0 cursor-pointer",
+                            selectedIndex === index
+                                ? "bg-white text-gray-900 rounded-t-lg"
+                                : "text-gray-600 hover:text-gray-900 hover:bg-gray-300/50 rounded-t-lg"
+                        )}
+                    >
+                        <span className={cn(
+                            "shrink-0 size-5 rounded text-xs font-medium flex items-center justify-center",
+                            selectedIndex === index
+                                ? "bg-gray-200 text-gray-600"
+                                : "bg-gray-400/50 text-gray-600"
+                        )}>
+                            {index + 1}
+                        </span>
+                        <span className="truncate">{notification.heading || "Untitled"}</span>
+                        {notifications.length > 1 && (
                             <button
-                                onClick={() => setIsPresetOpen(!isPresetOpen)}
-                                className="w-full flex items-center justify-between"
+                                onClick={(e) => removeNotification(index, e)}
+                                className="absolute top-1 right-1 shrink-0 size-5 rounded-full flex items-center justify-center transition-all text-gray-400 hover:text-white hover:bg-red-500 opacity-0 group-hover:opacity-100"
                             >
-                                <div className="flex items-center gap-3">
-                                    <MdTune className="size-4 text-gray-400" />
-                                    <span className="text-sm font-medium text-gray-700">Preset</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm text-gray-500 capitalize">
-                                        {selectedPreset.replace(/([A-Z])/g, ' $1').trim()}
-                                    </span>
-                                    <MdKeyboardArrowDown className={cn(
-                                        "size-4 text-gray-400 transition-transform",
-                                        isPresetOpen && "rotate-180"
-                                    )} />
-                                </div>
+                                <MdClose className="size-3" />
                             </button>
+                        )}
+                    </button>
+                ))}
+                {notifications.length < 3 && (
+                    <button
+                        onClick={addNotification}
+                        className="shrink-0 px-4 py-2.5 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-300/50 rounded-t-lg transition-colors cursor-pointer"
+                        title="Add notification"
+                    >
+                        <MdAdd className="size-5" />
+                    </button>
+                )}
+            </div>
 
-                            {/* Preset Dropdown */}
-                            {isPresetOpen && (
-                                <div className="absolute top-full right-5 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 py-1 min-w-32">
-                                    {(Object.keys(NOTIFICATION_PRESETS) as NotificationPresetKey[]).map((key) => (
+            {/* Content Panel */}
+            <div className={cn(
+                "bg-white rounded-b-lg",
+                selectedIndex !== 0 && "rounded-tl-lg",
+                selectedIndex !== notifications.length - 1 && "rounded-tr-lg"
+            )}>
+                {/* Content */}
+                <div className="p-5 space-y-6">
+                {/* Style Section */}
+                <div>
+                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Style</h4>
+                    <div className="space-y-4">
+                        {/* Preset */}
+                        <div className="flex items-center gap-3">
+                            <label className="text-sm text-gray-600 w-24 shrink-0">Preset</label>
+                            <div className="flex flex-wrap gap-2">
+                                {(Object.keys(NOTIFICATION_PRESETS) as NotificationPresetKey[]).map((key) => {
+                                    const isSelected = NOTIFICATION_PRESETS[key].heading === settings.heading;
+                                    return (
                                         <button
                                             key={key}
                                             onClick={() => applyPreset(key)}
                                             className={cn(
-                                                "w-full px-4 py-2 text-sm text-left capitalize hover:bg-gray-50 transition-colors",
-                                                selectedPreset === key && "bg-gray-50 text-wp-blue-600 font-medium"
+                                                "px-3 py-1.5 text-sm rounded-lg transition-all capitalize",
+                                                isSelected
+                                                    ? "bg-gray-900 text-white"
+                                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                                             )}
                                         >
                                             {key.replace(/([A-Z])/g, ' $1').trim()}
                                         </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Color */}
-                        <div className="px-5 h-12 flex items-center">
-                            <div className="w-full flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <MdPalette className="size-4 text-gray-400" />
-                                    <span className="text-sm font-medium text-gray-700">Color</span>
-                                </div>
-                                <div className="flex gap-2">
-                                    {(Object.keys(NOTIFICATION_COLORS) as NotificationColorKey[]).map((key) => {
-                                        const color = NOTIFICATION_COLORS[key];
-                                        return (
-                                            <button
-                                                key={key}
-                                                onClick={() => updateSetting("color", key)}
-                                                className={cn(
-                                                    "size-6 rounded-full transition-all",
-                                                    color.swatch,
-                                                    settings.color === key
-                                                        ? "ring-2 ring-offset-2 ring-gray-400 scale-110"
-                                                        : "hover:scale-110"
-                                                )}
-                                                title={color.label}
-                                            />
-                                        );
-                                    })}
-                                </div>
+                                    );
+                                })}
                             </div>
                         </div>
 
-                        {/* Icon */}
-                        <div className="px-5 h-12 flex items-center relative">
-                            <button
-                                onClick={() => setIsIconPickerOpen(!isIconPickerOpen)}
-                                className="w-full flex items-center justify-between"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <MdImage className="size-4 text-gray-400" />
-                                    <span className="text-sm font-medium text-gray-700">Icon</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className={cn("size-7 rounded-md flex items-center justify-center", selectedColor.iconBg)}>
-                                        <SelectedIcon className={cn("size-4", selectedColor.iconColor)} />
-                                    </div>
+                        {/* Color */}
+                        <div className="flex items-center gap-3">
+                            <label className="text-sm text-gray-600 w-24 shrink-0">Color</label>
+                            <div className="flex items-center gap-2">
+                                {(Object.keys(NOTIFICATION_COLORS) as NotificationColorKey[]).map((key) => {
+                                    const color = NOTIFICATION_COLORS[key];
+                                    return (
+                                        <button
+                                            key={key}
+                                            onClick={() => updateSetting("color", key)}
+                                            className={cn(
+                                                "size-7 rounded-full transition-all",
+                                                color.swatch,
+                                                settings.color === key
+                                                    ? "ring-2 ring-offset-2 ring-gray-400 scale-110"
+                                                    : "hover:scale-110"
+                                            )}
+                                            title={color.label}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Content Section */}
+                <div>
+                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Content</h4>
+                    <div className="space-y-4">
+                        {/* Icon Picker */}
+                        <div className="flex items-center gap-3">
+                            <label className="text-sm text-gray-600 w-24 shrink-0">Icon</label>
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsIconPickerOpen(!isIconPickerOpen)}
+                                    className={cn(
+                                        "flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors",
+                                        selectedColor.iconBg
+                                    )}
+                                >
+                                    <SelectedIcon className={cn("size-5", selectedColor.iconColor)} />
                                     <MdKeyboardArrowDown className={cn(
                                         "size-4 text-gray-400 transition-transform",
                                         isIconPickerOpen && "rotate-180"
                                     )} />
-                                </div>
-                            </button>
-
-                            {/* Icon Dropdown */}
-                            {isIconPickerOpen && (
-                                <div className="absolute top-full right-5 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-3 max-h-56 overflow-y-auto w-56">
-                                    <div className="grid grid-cols-4 gap-2">
-                                        {(Object.keys(NOTIFICATION_ICONS) as NotificationIconKey[]).map((key) => {
-                                            const Icon = NOTIFICATION_ICONS[key];
-                                            return (
-                                                <button
-                                                    key={key}
-                                                    onClick={() => {
-                                                        updateSetting("icon", key);
-                                                        setIsIconPickerOpen(false);
-                                                    }}
-                                                    className={cn(
-                                                        "size-10 rounded-md flex items-center justify-center transition-colors shrink-0",
-                                                        settings.icon === key
-                                                            ? cn(selectedColor.iconBg, selectedColor.iconColor)
-                                                            : "hover:bg-gray-100 text-gray-500"
-                                                    )}
-                                                    title={key}
-                                                >
-                                                    <Icon className="size-5" />
-                                                </button>
-                                            );
-                                        })}
+                                </button>
+                                {isIconPickerOpen && (
+                                    <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-3 max-h-56 overflow-y-auto w-64">
+                                        <div className="grid grid-cols-6 gap-1">
+                                            {(Object.keys(NOTIFICATION_ICONS) as NotificationIconKey[]).map((key) => {
+                                                const Icon = NOTIFICATION_ICONS[key];
+                                                return (
+                                                    <button
+                                                        key={key}
+                                                        onClick={() => {
+                                                            updateSetting("icon", key);
+                                                            setIsIconPickerOpen(false);
+                                                        }}
+                                                        className={cn(
+                                                            "size-9 rounded-md flex items-center justify-center transition-colors",
+                                                            settings.icon === key
+                                                                ? cn(selectedColor.iconBg, selectedColor.iconColor)
+                                                                : "hover:bg-gray-100 text-gray-500"
+                                                        )}
+                                                        title={key}
+                                                    >
+                                                        <Icon className="size-5" />
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
 
-                        {/* Heading - Accordion */}
-                        <div>
-                            <button
-                                onClick={() => toggleField("heading")}
-                                className="w-full px-5 h-12 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <MdTitle className="size-4 text-gray-400" />
-                                    <span className="text-sm font-medium text-gray-700">Heading</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm text-gray-500 truncate max-w-[180px]">
-                                        {settings.heading}
-                                    </span>
-                                    <MdKeyboardArrowDown className={cn(
-                                        "size-4 text-gray-400 transition-transform shrink-0",
-                                        expandedField === "heading" && "rotate-180"
-                                    )} />
-                                </div>
-                            </button>
-                            {expandedField === "heading" && (
-                                <div className="px-5 pb-3">
-                                    <input
-                                        type="text"
-                                        value={settings.heading}
-                                        onChange={(e) => updateSetting("heading", e.target.value)}
-                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
-                                        autoFocus
-                                    />
-                                </div>
-                            )}
+                        {/* Heading */}
+                        <div className="flex items-center gap-3">
+                            <label className="text-sm text-gray-600 w-24 shrink-0">Heading</label>
+                            <input
+                                type="text"
+                                value={settings.heading}
+                                onChange={(e) => updateSetting("heading", e.target.value)}
+                                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
+                                placeholder="Notification heading"
+                            />
                         </div>
 
-                        {/* Subtext - Accordion */}
-                        <div>
-                            <button
-                                onClick={() => toggleField("subtext")}
-                                className="w-full px-5 h-12 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <MdNotes className="size-4 text-gray-400" />
-                                    <span className="text-sm font-medium text-gray-700">Subtext</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm text-gray-500 truncate max-w-[180px]">
-                                        {settings.subtext}
-                                    </span>
-                                    <MdKeyboardArrowDown className={cn(
-                                        "size-4 text-gray-400 transition-transform shrink-0",
-                                        expandedField === "subtext" && "rotate-180"
-                                    )} />
-                                </div>
-                            </button>
-                            {expandedField === "subtext" && (
-                                <div className="px-5 pb-3">
-                                    <textarea
-                                        value={settings.subtext}
-                                        onChange={(e) => updateSetting("subtext", e.target.value)}
-                                        rows={3}
-                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent resize-none"
-                                        autoFocus
-                                    />
-                                </div>
-                            )}
+                        {/* Subtext */}
+                        <div className="flex items-start gap-3">
+                            <label className="text-sm text-gray-600 w-24 shrink-0 pt-2">Subtext</label>
+                            <textarea
+                                value={settings.subtext}
+                                onChange={(e) => updateSetting("subtext", e.target.value)}
+                                rows={2}
+                                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent resize-none"
+                                placeholder="Additional details..."
+                            />
                         </div>
 
-                        {/* Primary Button - Accordion */}
-                        <div>
-                            <button
-                                onClick={() => toggleField("primaryButtonText")}
-                                className="w-full px-5 h-12 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <MdSmartButton className="size-4 text-gray-400" />
-                                    <span className="text-sm font-medium text-gray-700">Primary Button</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm text-gray-500 truncate max-w-[180px]">
-                                        {settings.primaryButtonText}
-                                    </span>
-                                    <MdKeyboardArrowDown className={cn(
-                                        "size-4 text-gray-400 transition-transform shrink-0",
-                                        expandedField === "primaryButtonText" && "rotate-180"
-                                    )} />
-                                </div>
-                            </button>
-                            {expandedField === "primaryButtonText" && (
-                                <div className="px-5 pb-3">
-                                    <input
-                                        type="text"
-                                        value={settings.primaryButtonText}
-                                        onChange={(e) => updateSetting("primaryButtonText", e.target.value)}
-                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
-                                        autoFocus
-                                    />
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Secondary Button - Accordion */}
-                        <div>
-                            <button
-                                onClick={() => toggleField("secondaryButtonText")}
-                                className="w-full px-5 h-12 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <MdSmartButton className="size-4 text-gray-400" />
-                                    <span className="text-sm font-medium text-gray-700">Secondary Button</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm text-gray-500 truncate max-w-[180px]">
-                                        {settings.secondaryButtonText}
-                                    </span>
-                                    <MdKeyboardArrowDown className={cn(
-                                        "size-4 text-gray-400 transition-transform shrink-0",
-                                        expandedField === "secondaryButtonText" && "rotate-180"
-                                    )} />
-                                </div>
-                            </button>
-                            {expandedField === "secondaryButtonText" && (
-                                <div className="px-5 pb-3">
-                                    <input
-                                        type="text"
-                                        value={settings.secondaryButtonText}
-                                        onChange={(e) => updateSetting("secondaryButtonText", e.target.value)}
-                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
-                                        autoFocus
-                                    />
-                                </div>
-                            )}
+                        {/* Buttons */}
+                        <div className="flex items-center gap-3">
+                            <label className="text-sm text-gray-600 w-24 shrink-0">Buttons</label>
+                            <div className="flex-1 flex gap-3">
+                                <input
+                                    type="text"
+                                    value={settings.primaryButtonText}
+                                    onChange={(e) => updateSetting("primaryButtonText", e.target.value)}
+                                    className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
+                                    placeholder="Primary"
+                                />
+                                <input
+                                    type="text"
+                                    value={settings.secondaryButtonText}
+                                    onChange={(e) => updateSetting("secondaryButtonText", e.target.value)}
+                                    className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-wp-blue-500 focus:border-transparent"
+                                    placeholder="Secondary"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
-            )}
-        </>
+                </div>
+            </div>
+        </div>
     );
 }

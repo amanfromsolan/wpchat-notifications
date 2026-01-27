@@ -34,14 +34,15 @@ export default function Home() {
 						}
 					}}
 				/>
+				<div className="flex justify-center px-4 pb-4 mt-8">
+					<NotificationControls
+						notifications={notifications}
+						selectedIndex={selectedIndex}
+						onSelectIndex={setSelectedIndex}
+						onChange={setNotifications}
+					/>
+				</div>
 			</div>
-
-			<NotificationControls
-				notifications={notifications}
-				selectedIndex={selectedIndex}
-				onSelectIndex={setSelectedIndex}
-				onChange={setNotifications}
-			/>
 		</WPAdminWrapper>
 	);
 }
