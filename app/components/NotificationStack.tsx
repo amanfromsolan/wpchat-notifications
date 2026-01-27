@@ -3,7 +3,7 @@
 // Stacked notification cards with hover expansion
 import { useState } from "react";
 import { cn } from "@/app/lib/cn";
-import { MdClose } from "react-icons/md";
+import { HiXMark } from "react-icons/hi2";
 import { PrimaryButton, SecondaryButton } from "./Button";
 import {
     NotificationSettings,
@@ -94,7 +94,7 @@ export function NotificationStack({
                                     }}
                                     className="absolute top-3 right-3 size-6 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
                                 >
-                                    <MdClose className="size-4" />
+                                    <HiXMark className="size-4" />
                                 </button>
 
                                 <div className="flex gap-4 pr-6">

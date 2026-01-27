@@ -3,79 +3,69 @@
 import { useState } from "react";
 import { cn } from "@/app/lib/cn";
 import {
-    MdAdd,
-    MdClose,
-    MdCelebration,
-    MdWarning,
-    MdInfo,
-    MdLocalOffer,
-    MdRocket,
-    MdStar,
-    MdNotifications,
-    MdCardGiftcard,
-    MdTrendingUp,
-    MdNewReleases,
-    MdCheckCircle,
-    MdError,
-    MdLightbulb,
-    MdFavorite,
-    MdThumbUp,
-    MdAutoAwesome,
-    MdBolt,
-    MdDiamond,
-    MdEmojiEvents,
-    MdFlare,
-    MdGrade,
-    MdInsights,
-    MdLocalFireDepartment,
-    MdMilitaryTech,
-    MdPsychology,
-    MdSavings,
-    MdSchedule,
-    MdSecurity,
-    MdSpeed,
-    MdTimer,
-    MdUpdate,
-    MdVerified,
-    MdWorkspacePremium,
-    MdKeyboardArrowDown,
-} from "react-icons/md";
+    HiPlus,
+    HiXMark,
+    HiSparkles,
+    HiExclamationTriangle,
+    HiInformationCircle,
+    HiTag,
+    HiRocketLaunch,
+    HiStar,
+    HiBell,
+    HiGift,
+    HiArrowTrendingUp,
+    HiSparkles as HiNew,
+    HiCheckCircle,
+    HiXCircle,
+    HiLightBulb,
+    HiHeart,
+    HiHandThumbUp,
+    HiBolt,
+    HiCube,
+    HiTrophy,
+    HiFire,
+    HiChartBar,
+    HiAcademicCap,
+    HiBanknotes,
+    HiClock,
+    HiShieldCheck,
+    HiSignal,
+    HiArrowPath,
+    HiCheckBadge,
+    HiChevronDown,
+} from "react-icons/hi2";
 
 // Available icons for the notification
 export const NOTIFICATION_ICONS = {
-    celebration: MdCelebration,
-    warning: MdWarning,
-    info: MdInfo,
-    offer: MdLocalOffer,
-    rocket: MdRocket,
-    star: MdStar,
-    notification: MdNotifications,
-    gift: MdCardGiftcard,
-    trending: MdTrendingUp,
-    new: MdNewReleases,
-    check: MdCheckCircle,
-    error: MdError,
-    lightbulb: MdLightbulb,
-    heart: MdFavorite,
-    thumbUp: MdThumbUp,
-    sparkle: MdAutoAwesome,
-    bolt: MdBolt,
-    diamond: MdDiamond,
-    trophy: MdEmojiEvents,
-    flare: MdFlare,
-    grade: MdGrade,
-    insights: MdInsights,
-    fire: MdLocalFireDepartment,
-    medal: MdMilitaryTech,
-    brain: MdPsychology,
-    savings: MdSavings,
-    schedule: MdSchedule,
-    security: MdSecurity,
-    speed: MdSpeed,
-    timer: MdTimer,
-    update: MdUpdate,
-    verified: MdVerified,
-    premium: MdWorkspacePremium,
+    celebration: HiSparkles,
+    warning: HiExclamationTriangle,
+    info: HiInformationCircle,
+    offer: HiTag,
+    rocket: HiRocketLaunch,
+    star: HiStar,
+    notification: HiBell,
+    gift: HiGift,
+    trending: HiArrowTrendingUp,
+    new: HiNew,
+    check: HiCheckCircle,
+    error: HiXCircle,
+    lightbulb: HiLightBulb,
+    heart: HiHeart,
+    thumbUp: HiHandThumbUp,
+    sparkle: HiSparkles,
+    bolt: HiBolt,
+    diamond: HiCube,
+    trophy: HiTrophy,
+    fire: HiFire,
+    insights: HiChartBar,
+    medal: HiAcademicCap,
+    savings: HiBanknotes,
+    schedule: HiClock,
+    security: HiShieldCheck,
+    speed: HiSignal,
+    timer: HiClock,
+    update: HiArrowPath,
+    verified: HiCheckBadge,
 } as const;
 
 // Color theme options
@@ -266,7 +256,7 @@ export function NotificationControls({
                                 onClick={(e) => removeNotification(index, e)}
                                 className="absolute top-1 right-1 shrink-0 size-5 rounded-full flex items-center justify-center transition-all text-gray-400 hover:text-white hover:bg-red-500 opacity-0 group-hover:opacity-100"
                             >
-                                <MdClose className="size-3" />
+                                <HiXMark className="size-3" />
                             </button>
                         )}
                     </div>
@@ -277,7 +267,7 @@ export function NotificationControls({
                         className="shrink-0 px-4 py-2.5 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-300/50 rounded-t-lg transition-colors cursor-pointer"
                         title="Add notification"
                     >
-                        <MdAdd className="size-5" />
+                        <HiPlus className="size-5" />
                     </button>
                 )}
             </div>
@@ -361,7 +351,7 @@ export function NotificationControls({
                                     )}
                                 >
                                     <SelectedIcon className={cn("size-5", selectedColor.iconColor)} />
-                                    <MdKeyboardArrowDown className={cn(
+                                    <HiChevronDown className={cn(
                                         "size-4 text-gray-400 transition-transform",
                                         isIconPickerOpen && "rotate-180"
                                     )} />
